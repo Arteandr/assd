@@ -1,12 +1,20 @@
 package main
 
 import (
-	"course/internal/handlers/wallet"
+	"course/internal/handlers/user"
+	"github.com/gorilla/mux"
 	"net/http"
 )
 
 func main() {
-	http.HandleFunc("/wallet", wallet.Handle)
+	r := mux.NewRouter()
 
-	http.ListenAndServe(":9001", nil)
+	userRouter := r.PathPrefix("/user").Subrouter()
+
+	userRouter.HandleFunc("/", user.GetUserListHandler).Methods("GET")
+	userRouter.HandleFunc("/", user.CreateUserHandler).Methods("POST")
+	userRouter.HandleFunc("/{id:[0-9]+}", user.GetUserHandler).Methods("GET")
+	userRouter.HandleFunc("/{id:[0-9]+}", user.DeleteUserHandler).Methods("DELETE")
+
+	http.ListenAndServe(":9001", r)
 }
