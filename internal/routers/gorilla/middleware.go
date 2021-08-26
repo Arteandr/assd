@@ -1,6 +1,10 @@
 package gorilla
 
-import "net/http"
+import (
+	"context"
+	"net/http"
+	"os"
+)
 
 const (
 	login = "jeffreyz"
@@ -16,5 +20,14 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		}
 
 		next.ServeHTTP(w, r)
+	})
+}
+func RequestIDMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requestID := os.Getuid()
+
+		ctx := context.WithValue(context.Background(), "REQUEST_ID", requestID)
+
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

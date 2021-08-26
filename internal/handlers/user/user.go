@@ -5,6 +5,7 @@ import (
 	"course/internal/repositories/user"
 	"encoding/json"
 	"github.com/gorilla/mux"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -25,6 +26,9 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}
+
+	log.Printf("User[%d] successfully created\n", u.ID)
+	log.Printf("Name: %s | Age: %d | Email: %s \n", u.Name, u.Age, u.Email)
 
 	w.WriteHeader(http.StatusCreated)
 }
@@ -73,6 +77,8 @@ func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		http.Error(w, "", http.StatusInternalServerError)
+		log.Print(err)
+
 		return
 	}
 	if err = user.Delete(id); err != nil {

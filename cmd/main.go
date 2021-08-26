@@ -12,10 +12,11 @@ func main() {
 
 	userRouter := r.PathPrefix("/user").Subrouter()
 
+	userRouter.Use(gorilla.RequestIDMiddleware)
 	userRouter.HandleFunc("/", user.GetUserListHandler).Methods("GET")
 	userRouter.HandleFunc("/{id:[0-9]+}", user.GetUserHandler).Methods("GET")
 	userRouter.Handle("/", gorilla.AuthMiddleware(http.HandlerFunc(user.CreateUserHandler))).Methods("POST")
 	userRouter.Handle("/{id:[0-9]+}", gorilla.AuthMiddleware(http.HandlerFunc(user.DeleteUserHandler))).Methods("DELETE")
 
-	http.ListenAndServe(":9001", r)
+	http.ListenAndServe(":9000", r)
 }
